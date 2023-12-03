@@ -5,21 +5,29 @@ with open('input.txt', 'r') as file:
     fline = file.readlines()
 
 ## part 1
+def get_max_num_per_color(line, color):
+    """
+    gets max num marbles shown for a given color
+    """
+    all_nums_per_color = re.findall(rf'\d+ {color}', line)
+    all_nums = np.array([int(result.split(' ')[0]) for result in all_nums_per_color])
+    return np.max(np.array(all_nums).astype(int))
+
 def check_num_for_color_possible(line, color):
     """
-    helper fn for `is_game_possible`
+    helper fn for `is_game_possible` by seeing if the max num
+    shown per color is actually possible
     """
     game_dict = {'red': 12, 'green': 13, 'blue': 14}
-    all_color = re.findall(rf'\d+ {color}', line)
-    shown_cubes = np.array([int(result.split(' ')[0]) for result in all_color])
-    if len(np.where(shown_cubes > game_dict[color])[0]) == 0:
+    max_num = get_max_num_per_color(line, color)
+    if max_num <= game_dict[color]:
         return True
     else:
         return False
 
 def is_game_possible(line):
     """
-    if it's possible, return the game id number
+    if it's possible (max num <= num of marbles), return the game id number
     otherwise return 0
     """
     possible_arr = []
@@ -39,14 +47,6 @@ print(f"part 1: the sum is {sum(result)}")
 
 
 ## part 2
-def get_max_num_per_color(line, color):
-    """
-    gets max num marbles shown for a given color
-    """
-    all_nums_per_color = re.findall(rf'\d+ {color}', line)
-    all_nums = np.array([int(result.split(' ')[0]) for result in all_nums_per_color])
-    return np.max(np.array(all_nums).astype(int))
-
 def get_power(line):
     """
     gets the power for a game
