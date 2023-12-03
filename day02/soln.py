@@ -37,6 +37,7 @@ for line in fline:
     result.append(is_game_possible(line))
 print(f"part 1: the sum is {sum(result)}")
 
+
 ## part 2
 def get_max_num_per_color(line, color):
     """

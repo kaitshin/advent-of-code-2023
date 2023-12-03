@@ -4,10 +4,11 @@ import numpy as np
 with open('input.txt', 'r') as file:
     fline = file.readlines()
 
-# part 1
+## part 1
 nums_only = np.array([re.sub("[^0-9]", "", line) for line in fline])
 soln_str = np.array([num[0]+num[-1] for num in nums_only])
 print(f"part 1: the sum is {soln_str.astype(int).sum()}")
+
 
 ## part 2
 txt2num = {
