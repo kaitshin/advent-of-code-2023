@@ -41,8 +41,6 @@ def check_edge_cases(line_idx, iis):
 
 
 def check_surrounding_idxs(line_idx, iis):
-    """
-    """
     symbols = np.array([])
     first_line, last_line, first_char, last_char = check_edge_cases(line_idx, iis)
 
