@@ -41,6 +41,9 @@ def check_edge_cases(line_idx, iis):
 
 
 def check_surrounding_idxs(line_idx, iis):
+    """
+    i know it's ugly :( but it works
+    """
     symbols = np.array([])
     first_line, last_line, first_char, last_char = check_edge_cases(line_idx, iis)
 
@@ -93,6 +96,23 @@ print(f"part 1: the sum is {sum(part_nums)}")
 
 ## part 2
 gear_ratios = []
+
+def append_gearnums(char_idx, gear_nums, fline, fline_idx):
+    """
+    checks if a stringified number has indices adjacent to the * (for the above/below line)
+    or if it has indices directly next to the * (for the same line, left/right case)
+
+    if that number is indeed attached to a * gear, then it's added to the gear_nums list
+    """
+    num_jjs = [m for m in re.finditer(r'\d+', fline[fline_idx])]
+    for jj in num_jjs:
+        if ((char_idx >= jj.start()-1 and char_idx <= jj.end()) 
+            or (char_idx == jj.start()-1 or char_idx == jj.end())):
+            gear_nums.append( int(fline[fline_idx][jj.start():jj.end()]) )
+
+    return gear_nums
+
+
 for line_idx, line in enumerate(fline):
     # find indexes of a * character
     char_iis = [m for m in re.finditer(r'\*', line)]
@@ -100,27 +120,13 @@ for line_idx, line in enumerate(fline):
     for iis in char_iis:
         first_line, last_line, first_char, last_char = check_edge_cases(line_idx, iis)
         char_idx = iis.start()
+        
         gear_nums = []
-
         if not first_line:
-            # check line above - is there a number whose indices are adj to the character index?
-            num_jjs = [m for m in re.finditer(r'\d+', fline[line_idx-1])]
-            for jj in num_jjs:
-                if char_idx >= jj.start()-1 and char_idx <= jj.end():
-                    gear_nums.append( int(fline[line_idx-1][jj.start():jj.end()]) )
-
+            gear_nums = append_gearnums(char_idx, gear_nums, fline, fline_idx=line_idx-1)
         if not last_line:
-            # check line below
-            num_jjs = [m for m in re.finditer(r'\d+', fline[line_idx+1])]
-            for jj in num_jjs:
-                if char_idx >= jj.start()-1 and char_idx <= jj.end():
-                    gear_nums.append( int(fline[line_idx+1][jj.start():jj.end()]) )
-
-        # also check the same line, to the left and right
-        num_jjs = [m for m in re.finditer(r'\d+', fline[line_idx])]
-        for jj in num_jjs:
-            if char_idx == jj.start()-1 or char_idx == jj.end():
-                gear_nums.append( int(fline[line_idx][jj.start():jj.end()]) )
+            gear_nums = append_gearnums(char_idx, gear_nums, fline, fline_idx=line_idx+1)
+        gear_nums = append_gearnums(char_idx, gear_nums, fline, fline_idx=line_idx)
 
         # a gear is any * symbol that is adjacent to exactly two part numbers
         if len(gear_nums) == 2:
